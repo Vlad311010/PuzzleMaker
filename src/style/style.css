@@ -1,0 +1,20 @@
+.Dragable {
+    position: absolute;
+    will-change: transform;
+}
+
+.PuzzlePieceBorderHighlight {
+    filter: drop-shadow(2px 2px rgb(43, 196, 43))
+            drop-shadow(-2px -2px rgb(43, 196, 43));
+}
+
+.PuzzleWindow {
+    background-color: blanchedalmond;
+    border: 2px;
+    border-style: solid;
+    border-color: black;
+    width: 90rem;
+    height: 40rem;
+}
+
+* {user-select: none}

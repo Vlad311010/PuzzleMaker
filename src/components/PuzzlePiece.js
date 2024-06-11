@@ -1,7 +1,7 @@
 import Draggable from "react-draggable";
 import { useRef } from "react";
 
-function PuzzlePiece( {image, idx, position, disabled, onStart, onStop, onDrag} ) {
+function PuzzlePiece( {image, idx, position, onStart, onStop, onDrag} ) {
     const nodeRef = useRef(null);
     const grid = [1, 1];
     
@@ -16,8 +16,7 @@ function PuzzlePiece( {image, idx, position, disabled, onStart, onStop, onDrag} 
         onStart={onStart}
         onStop={onStop}
         onDrag={onDrag}
-        scale={1}
-        disabled={disabled}>
+        scale={1}>
             <img id={idx} idx={idx} ref={nodeRef} src={image} draggable="false" className="Focused Draggable">
             </img>    
         </Draggable>

@@ -18,7 +18,7 @@ function PuzzlePiece( {image, idx, position, disabled, onStart, onStop, onDrag} 
         onDrag={onDrag}
         scale={1}
         disabled={disabled}>
-            <img id={idx} idx={idx} ref={nodeRef} src={image} draggable="false" className="Draggable">
+            <img id={idx} idx={idx} ref={nodeRef} src={image} draggable="false" className="Focused Draggable">
             </img>    
         </Draggable>
     </>);

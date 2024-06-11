@@ -88,13 +88,13 @@ export default function Puzzle({}) {
     }
     
     return (
-        <div className="PuzzleWindow" >
+        <div className="PuzzleWindow bg-dark bg-gradient border-gradient" >
             {puzzlePieces}
         </div>
     )
 
     function disableInteractions(time) {
-        // rapid clicks on puzzle piece may cause element displacing
+        // rapid clicks on puzzle piece may cause element displacing // fixed
         setInteraction(false);
         setTimeout(function() {
             setInteraction(true);
@@ -163,8 +163,6 @@ export default function Puzzle({}) {
             setPuzzleData(copy);
         }
         updated.current = true;
-        // disableInteractions(400);
-        disableInteractions(200);
     }
 
     function onStopHandler(e, dragData) {
@@ -262,8 +260,6 @@ export default function Puzzle({}) {
             const copy = structuredClone(data);
             copy[pieceIdx] = { 
                 ...copy[pieceIdx],
-                // x: dragData.lastX,
-                // y: dragData.lastY,
                 x: x,
                 y: y,
                 clientPosX: clientPos.x, 
@@ -300,8 +296,7 @@ export default function Puzzle({}) {
 
     function calculateJointPosition(elementPos, pieceIdx, jointToPieceIdx) {
         const jointsData = getJoinstData(pieceIdx);
-        // const jointPosition = { 'x': elementPos.x + jointsData[jointToPieceIdx].x - puzzleDataJson.margin, 'y': elementPos.y + jointsData[jointToPieceIdx].y - puzzleDataJson.margin };
-        const jointPosition = { 'x': elementPos.x + jointsData[jointToPieceIdx].x, 'y': elementPos.y + jointsData[jointToPieceIdx].y};
+        const jointPosition = { 'x': elementPos.x + jointsData[jointToPieceIdx].x, 'y': elementPos.y + jointsData[jointToPieceIdx].y };
         return jointPosition;
     }
 

@@ -1,38 +1,46 @@
 import puzzleDataJson from "../puzzlePieces/puzzleData.json"
 import PuzzlePiece from "./PuzzlePiece"
 import { useState, useRef, useEffect } from 'react'
-// import { getPieceIndex, getPieceElementByIdx, calculateDistance } from '../scrips/puzzleUtils'
-// import '../scrips/puzzleUtils'
 import * as utils from '../scrips/puzzleUtils'; 
+import PRNG from "../scrips/prng";
 
 
-function createDictionary() {
+function createDictionary(rng) {
     const dictionary = new Object();
     let limiter = 500;
-    for (let idx in puzzleDataJson.pieces) {
+    const pieces = Object.keys(puzzleDataJson.pieces);
+    utils.shuffleArray(pieces, rng);
+    for (let i = 0; i < pieces.length; i++) {
+        const idx = pieces[i];
         if (limiter <= 0)
             break;
 
-        dictionary[idx] = {x:0, y:0, clientPosX: 0, clientPosY: 0, diffX: 0, diffY: 0};
+        dictionary[idx] = {x: 0, y:0, clientPosX: 0, clientPosY: 0, diffX: 0, diffY: 0};
         limiter--;
     }
     return dictionary;
 }
 
-export default function Puzzle({}) {
-    let currentTarget = useRef(null);
-    let updated = useRef(false);
-    let dragStart = useRef({x:0, y:0});
+
+export default function Puzzle({seed}) {
+    const currentTarget = useRef(null);
+    const updated = useRef(false);
+    const dragStart = useRef({x:0, y:0});
+    let rng = new PRNG(seed);
     
-    const [puzzleData, setPuzzleData] = useState(createDictionary());
+    const [puzzleData, setPuzzleData] = useState(createDictionary(rng));
     const [connectedPieces, setConectedPieces] = useState([]);
+    // const rng = useRef(new PRNG(seed));
+
+    console.log('puzzle', seed);
+    
     
     const pieceSize = puzzleDataJson.pieceSize;
     const margin = puzzleDataJson.margin;
     const jointDetectionRadius = margin / 2;
     
     const debugHighlight = true;
-    
+
     // console.log(puzzleDataJson);
     // console.log(puzzleData)
     // console.log(connectedPieces);
@@ -68,70 +76,29 @@ export default function Puzzle({}) {
             if (event.key === 'f') {
                 event.preventDefault();
                 disconnectAllPieces();
+                // restartPuzzle(seed);
             }
         })
 
-        
+        restartPuzzle(seed);
         // setClientPos();
         
-    }, []);
+    }, [seed]);
 
     const puzzlePieces = [];
     for (let k in puzzleData) {
         puzzlePieces.push(
-            <PuzzlePiece key={k} idx={k} image={images[`${k}.png`]} position={puzzleData[k]}
+            <PuzzlePiece key={k} idx={k} image={images[`${k}.png`]} position={puzzleData[k]} 
             onStart={onStartHandler} onStop={onStopHandler} onDrag={dragHandler} />
         );
     }
+    
     
     return (
         <div className="PuzzleWindow bg-dark bg-gradient border-gradient" >
             {puzzlePieces}
         </div>
     )
-
-    function getConnectedPieces(originalPieceIdx, excludeSelf = true) {
-        for (let i = 0; i < connectedPieces.length; i++) {
-            if (connectedPieces[i].includes(originalPieceIdx))
-                return excludeSelf ? connectedPieces[i].filter(idx => idx != originalPieceIdx) : connectedPieces[i];
-        }
-        return []
-    }
-
-    function getConnectedPiecesGroupIdx(groupMember) {
-        for (let i = 0; i < connectedPieces.length; i++) {
-            if (connectedPieces[i].includes(groupMember))
-                return i;
-        }
-        return -1;
-    }
-
-    function areInTheSameConnectedGroup(pieceIdx1, pieceIdx2) {
-        return getConnectedPiecesGroupIdx(pieceIdx1) != -1 && 
-        getConnectedPiecesGroupIdx(pieceIdx1) === getConnectedPiecesGroupIdx(pieceIdx2);
-    }
-
-
-    function moveConnectedPieces(connected, deltaX, deltaY) {
-        const moveConnectedPiecesHelper = (data) => {
-            const copy = structuredClone(data);
-            for (let i = 0; i < connected.length; i++) {
-                copy[connected[i]] = {
-                    ...copy[connected[i]],
-                    x: copy[connected[i]].x + deltaX, 
-                    y: copy[connected[i]].y + deltaY,
-                    clientPosX: copy[connected[i]].clientPosX + deltaX,
-                    clientPosY: copy[connected[i]].clientPosY + deltaY
-                }
-            }
-            return copy;
-        }
-            
-        if (!connected) 
-            return;
-        setPuzzleData(d => moveConnectedPiecesHelper(d));
-    }
-
 
     function onStartHandler(e, dragData) {
         currentTarget.current = e.target;
@@ -199,6 +166,48 @@ export default function Puzzle({}) {
 
         
         currentTarget.current = null;
+    }
+
+    function getConnectedPieces(originalPieceIdx, excludeSelf = true) {
+        for (let i = 0; i < connectedPieces.length; i++) {
+            if (connectedPieces[i].includes(originalPieceIdx))
+                return excludeSelf ? connectedPieces[i].filter(idx => idx != originalPieceIdx) : connectedPieces[i];
+        }
+        return []
+    }
+
+    function getConnectedPiecesGroupIdx(groupMember) {
+        for (let i = 0; i < connectedPieces.length; i++) {
+            if (connectedPieces[i].includes(groupMember))
+                return i;
+        }
+        return -1;
+    }
+
+    function areInTheSameConnectedGroup(pieceIdx1, pieceIdx2) {
+        return getConnectedPiecesGroupIdx(pieceIdx1) != -1 && 
+        getConnectedPiecesGroupIdx(pieceIdx1) === getConnectedPiecesGroupIdx(pieceIdx2);
+    }
+
+
+    function moveConnectedPieces(connected, deltaX, deltaY) {
+        const moveConnectedPiecesHelper = (data) => {
+            const copy = structuredClone(data);
+            for (let i = 0; i < connected.length; i++) {
+                copy[connected[i]] = {
+                    ...copy[connected[i]],
+                    x: copy[connected[i]].x + deltaX, 
+                    y: copy[connected[i]].y + deltaY,
+                    clientPosX: copy[connected[i]].clientPosX + deltaX,
+                    clientPosY: copy[connected[i]].clientPosY + deltaY
+                }
+            }
+            return copy;
+        }
+            
+        if (!connected) 
+            return;
+        setPuzzleData(d => moveConnectedPiecesHelper(d));
     }
 
 
@@ -322,6 +331,15 @@ export default function Puzzle({}) {
 
     function disconnectAllPieces() {
         setConectedPieces([]);
+    }
+
+    function restartPuzzle(randomSeed) {
+        randomSeed = randomSeed;
+        console.log('restart', randomSeed);
+        disconnectAllPieces();
+        rng = new PRNG(randomSeed);
+        setPuzzleData(createDictionary(rng));
+        updated.current = false;
     }
 
 }

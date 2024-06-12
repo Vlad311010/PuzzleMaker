@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Puzzle from "../components/Puzzle";
 import UI from "../components/UI";
 
@@ -16,10 +17,14 @@ async function getNaturalSize(url) {
 
 
 export default function Index() {
+  const [seed, setSeed] =  useState(0);
+
+  console.log('index', seed);
   return (
     <>
-      <UI />
-      <Puzzle />
+      <script src="svg.js"></script>
+      <UI seed={seed} setSeed={setSeed}/>
+      <Puzzle seed={seed} />
     </>
   );
 

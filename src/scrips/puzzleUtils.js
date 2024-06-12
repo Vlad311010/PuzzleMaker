@@ -11,7 +11,15 @@ export function merge(xs, ys) {
     return c;
 }
 
-
+export function shuffleArray(array, rng) {
+    for (var i = array.length - 1; i > 0; i--) {
+        // var j = Math.floor(Math.random() * (i + 1));
+        var j = Math.floor(rng.nextFloat() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
 
 export function getPieceIndex(piece) {
     return piece.getAttribute("idx");

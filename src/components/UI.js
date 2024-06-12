@@ -1,30 +1,37 @@
+import { useRef } from "react";
 
+export default function UI({seed, setSeed}) {
+    const seedInput = useRef(null);
 
-export default function UI({}) {
     return (
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Navbar</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                    </li>
-                </ul>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div className="container-fluid">
+                <span className="navbar-brand">PuzzleMaker1.0</span>
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav">
+                        <li className="nav-item">
+                            <span className="nav-link me-2" >Show Original</span>
+                        </li>
+                        <li className="nav-item">
+                            <form className="d-flex">
+                                <input ref={seedInput} className="form-control me-2"  placeholder="Seed" aria-label="Search"></input>
+                                <button onClick={handleStart}  className="btn btn-outline-success">Start</button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            </nav>
+        </nav>
     );
+
+
+    function handleStart(e) {
+        e.preventDefault();
+
+        const inputSeed = seedInput.current.value.match(/^\d*\d+$/);
+        if (!inputSeed)
+            seedInput.current.value = 0;
+
+        setSeed(parseInt(seedInput.current.value));
+    }
 }

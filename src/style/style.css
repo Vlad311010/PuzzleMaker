@@ -14,15 +14,14 @@
     border-right: 0px;
     border-bottom: 0px;
     border-style: solid;
-    border-color: rgb(0, 0, 0);
-    padding: 5rem 20rem 40rem 2rem;
+    padding: 5rem 0rem 40rem 2rem;
     width: fit-content;
     block-size: fit-content;
     border-image-slice: 1;
 }
 
 .border-gradient {
-    border-image-source: linear-gradient(to bottom  right, #212529, #22262a);
+    border-image-source: linear-gradient(to bottom right, #212529, #22262a);
 }
 
 

@@ -1,5 +1,4 @@
 import argparse
-import json
 
 from ImageSplitter import ImageSplitter
 from PuzzleMap import PuzzleMap
@@ -8,8 +7,8 @@ from PuzzleMap import PuzzleMap
 def main(args):
     puzzleMap = PuzzleMap(*args.size)
     puzzleMap.solvePuzzle()
-    ImageSplitter.splitImage(args.file, args.savePath, puzzleMap, args.border, args.safeMode)
-    ImageSplitter.joinImages(args.savePath, *args.size, 40)
+    ImageSplitter.splitImage(args.file, args.savePath, puzzleMap, args.margin, args.border, args.safeMode)
+    # ImageSplitter.joinImages(args.savePath, *args.size, 40)
 
 def createPuzzleMetaData():
     pass
@@ -35,7 +34,7 @@ def arguments_parser():
 
 if (__name__ == "__main__"):    
     arguments = arguments_parser()
-    print(arguments)
     main(arguments)
 
     # python PuzzleMaker.py C:\Users\Vlad\Desktop\testApp\puzzle\src\images\sampleImage00.png C:\Users\Vlad\Desktop\testApp\puzzle\src\puzzlePieces\ -s 8 8 --no-safe-mode 
+    # python PuzzleMaker.py C:\Users\Vlad\Desktop\testApp\puzzle\src\images\sampleImage00.png .\src\puzzlePieces\ -s 8 8 --no-safe-mode 

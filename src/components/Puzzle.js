@@ -30,10 +30,7 @@ export default function Puzzle({seed}) {
     
     const [puzzleData, setPuzzleData] = useState(createDictionary(rng));
     const [connectedPieces, setConectedPieces] = useState([]);
-    // const rng = useRef(new PRNG(seed));
 
-    console.log('puzzle', seed);
-    
     
     const pieceSize = puzzleDataJson.pieceSize;
     const margin = puzzleDataJson.margin;
@@ -335,7 +332,6 @@ export default function Puzzle({seed}) {
 
     function restartPuzzle(randomSeed) {
         randomSeed = randomSeed;
-        console.log('restart', randomSeed);
         disconnectAllPieces();
         rng = new PRNG(randomSeed);
         setPuzzleData(createDictionary(rng));

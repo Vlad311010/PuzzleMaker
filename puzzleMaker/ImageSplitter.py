@@ -3,7 +3,7 @@ import glob
 from typing import Final
 from json import dumps, dump
 
-from PIL import Image, ImageFilter, ImageOps, ImageDraw 
+from PIL import Image, ImageFilter, ImageOps 
 
 from Structures import *
 from PuzzleMap import PuzzleMap
@@ -12,7 +12,6 @@ from PuzzleMap import PuzzleMap
 class ImageSplitter:
     WHITE: Final[tuple[int, int, int]] = (255, 255, 255)
     BLACK: Final[tuple[int, int, int]] = (0, 0, 0)
-    # SAVE_FOLDER = "C:\\Users\\Vlad\\Desktop\\testApp\\puzzle\\src\\puzzlePieces\\"
 
     @classmethod
     def _makePuzzlePiece(cls, w:int, h:int, mw:int, mh:int, joints, jointSize = 25):

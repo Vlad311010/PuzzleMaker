@@ -2,6 +2,7 @@ import os
 import glob
 from typing import Final
 from json import dumps, dump
+from math import ceil
 
 from PIL import Image, ImageFilter, ImageOps 
 
@@ -14,7 +15,7 @@ class ImageSplitter:
     BLACK: Final[tuple[int, int, int]] = (0, 0, 0)
 
     @classmethod
-    def _makePuzzlePiece(cls, w:int, h:int, mw:int, mh:int, joints, jointSize = 25):
+    def _makePuzzlePiece(cls, w:int, h:int, mw:int, mh:int, joints):
         def insertJoint(original:Image, jointImg:Image, x:int, y:int):
             original.paste(jointImg, (x, y))
 
@@ -33,6 +34,7 @@ class ImageSplitter:
                 if (x < margin.x // 2 or x > size.x + margin.x // 2):
                     pixels[x, y] = cls.BLACK
 
+        jointSize = ceil(min(w, h) * 0.45)
         jointHorizontalPositive = Image.new("RGB", size=(mw//2, jointSize), color=cls.WHITE)
         jointVerticalPositive = jointHorizontalPositive.resize((jointHorizontalPositive.size[1], jointHorizontalPositive.size[0]))
         jointHorizontalNegative = ImageOps.invert(jointHorizontalPositive)
@@ -59,22 +61,6 @@ class ImageSplitter:
             insertJoint(im, jointVerticalPositive, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1)
         elif (joints[Sides.BOTTOM] == Connection.IN):
             insertJoint(im, jointVerticalNegative, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1 - negativeOffset)
-
-        # im.paste(jointHorizontalPositive, (offset, mid.y - (jointSize // 2)))
-        # im.paste(jointHorizontalPositive, (margin.x // 2 + size.x + 1 - offset, mid.y - (jointSize // 2)))
-        
-        # im.paste(jointVerticalPositive, (mid.x - (jointSize // 2), offset))
-        # im.paste(jointVerticalPositive, (mid.x - (jointSize // 2), margin.y // 2 + size.y + 1 - offset))
-
-        # right = [i for i in range(size.x, size.x + margin.x)]            
-        # left = [i for i in range(0, margin.x // 2)]            
-        # for y in range(mid.y - (jointSize // 2), mid.y + (jointSize // 2)):
-        #     for i in right:
-        #         pixels[i, y] = WHITE
-
-            
-        #     for j in left:
-        #         pixels[j, y] = WHITE
 
         # im.show()
         return im
@@ -118,13 +104,14 @@ class ImageSplitter:
         
     @staticmethod
     def _clearFolder(folder:str):
+        folder = folder.replace('/', os.path.sep)
         path = folder + '*.png' if folder[-1] == os.path.sep else folder + f'{os.path.sep}*.png'
         files = glob.glob(path)
         for f in files:
             os.remove(f)
 
     @staticmethod
-    def splitImage(imgPath:str, saveFolder:str, puzzleMap:PuzzleMap, margin:int, borderSize:int, safeMode:bool):
+    def splitImage(imgPath:str, saveFolder:str, puzzleMap:PuzzleMap, borderSize:int, safeMode:bool):
         if (not safeMode):
             ImageSplitter._clearFolder(saveFolder)
         
@@ -132,8 +119,10 @@ class ImageSplitter:
             # img = img.resize((800, 800))
             # img = img.resize(fitTo)
             img = img.resize((img.size[0] // 2, img.size[1] // 2))
+            
             w, h = img.size
             pieceSize = Vector2(w / puzzleMap.columns, h / puzzleMap.rows)
+            margin = ceil(min(pieceSize.x, pieceSize.y) * 0.6)
             stepX = pieceSize[0]
             stepY = pieceSize[1]
             y = 0
@@ -148,6 +137,7 @@ class ImageSplitter:
                 y += stepY
 
             ImageSplitter.createSplitedImageMetadata(imgPath, saveFolder, Vector2(puzzleMap.rows, puzzleMap.columns), pieceSize, margin, puzzleMap)
+    
 
     @staticmethod
     def createSplitedImageMetadata(imagePath:str, saveFolder:str,
@@ -157,13 +147,6 @@ class ImageSplitter:
             jointOffsetStepOut = Vector2(pieceSize.x / 2 + halfMarging - halfMarging / 2, pieceSize.y / 2 + halfMarging - halfMarging / 2)
             jointOffsetStepIn = Vector2(pieceSize.x / 2 - halfMarging + halfMarging / 2, pieceSize.y / 2 - halfMarging + halfMarging / 2)
             
-            # jointOffsetStepOut = Vector2(pieceSize.x / 2, pieceSize.y / 2)
-            # jointOffsetStepIn = Vector2(pieceSize.x / 2, pieceSize.y / 2)
-
-            # jointOffsetStepOut = Vector2(pieceSize.x / 2 + halfMarging, pieceSize.y / 2 + halfMarging)
-            # jointOffsetStepIn = Vector2(pieceSize.x / 2 - halfMarging, pieceSize.y / 2 - halfMarging)
-
-            # print(jointOffsetStepOut, jointOffsetStepIn)
             joints = {}
             piece = puzzleMap.getPiece(r, c)
             connected:Index
@@ -222,6 +205,8 @@ class ImageSplitter:
                 connectedImages.paste(img, pastePosition, img)
 
         connectedImages.show()
+
+        
 
     @staticmethod
     def test():
@@ -294,5 +279,5 @@ if __name__ == "__main__":
     puzzleMap.solvePuzzle()
     SAVE_FOLDER = "C:\\Users\\Vlad\\Desktop\\testApp\\puzzle\\src\\puzzlePieces\\"
     margin = 35
-    ImageSplitter.splitImage("./src/images/sampleImage00.png", SAVE_FOLDER, puzzleMap, margin, 1, False)
+    ImageSplitter.splitImage("./src/images/sampleImage00.png", SAVE_FOLDER, puzzleMap, 1, False)
     ImageSplitter.joinImages(SAVE_FOLDER, *puzzleSize, margin)

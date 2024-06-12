@@ -18,6 +18,20 @@
     width: fit-content;
     block-size: fit-content;
     border-image-slice: 1;
+    text-align: justify;
+}
+
+.PuzzleMock {
+    border-top: 10px;
+    border-left: 30px;
+    border-right: 0px;
+    border-bottom: 0px;
+    border-style: solid;
+    padding: 5rem 0rem 40rem 2rem;
+    
+    width: 100%;
+    height: 100%;
+    border-image-slice: 1;
 }
 
 .border-gradient {

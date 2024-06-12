@@ -8,18 +8,25 @@ export default class ApiRequest {
         }
     })
 
-    static async createPuzzle() {
+    static async createPuzzle(size) {
         const body = {
+            puzzleSize: {rows: size.rows, columns: size.columns}
         }
 
         let response = await ApiRequest.axiosInstance.post('createPuzzle', body)
             .then(function (response) {
-                // console.log(response.data);
-                return response.data;
+                return {'code': response.status }
+                // return response.data;
+
             })
             .catch(function (error) {
                 console.log(error);
-                return {};
+                const data = new Object();
+                if (error.response) {
+                    data['code'] = error.response.status;
+                    console.log(error.response.status)
+                }
+                return data;
             });
 
         return response;

@@ -98,6 +98,9 @@ export default function Puzzle({seed}) {
     )
 
     function onStartHandler(e, dragData) {
+        if (!e.target)
+            return;
+
         currentTarget.current = e.target;
         dragStart.current = { x: dragData.x, y: dragData.y };
 
@@ -120,6 +123,9 @@ export default function Puzzle({seed}) {
     }
 
     function dragHandler(e, dragData) {
+        if (!currentTarget.current)
+            return;
+
         const {deltaX, deltaY} = dragData;
         
         const idx = utils.getPieceIndex(currentTarget.current);
@@ -142,6 +148,9 @@ export default function Puzzle({seed}) {
     }
 
     function onStopHandler(e, dragData) {
+        if (!currentTarget.current)
+            return;
+        
         const idx = utils.getPieceIndex(currentTarget.current);
         const connected = getConnectedPieces(idx, true);
         if (connected.length === 0) { //  moving handled by moveConnectedPieces when moving connected group.

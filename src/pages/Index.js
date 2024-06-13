@@ -45,20 +45,19 @@ export default function Index() {
     </>
   );
 
-  async function hanldeStart(size) {
-    const responce = await apiCall(size);
+  async function hanldeStart(formData) {
+    const responce = await apiCall(formData);
     if (Object.keys(responce).length === 0 || responce.code < 200 || responce.code >= 300) {
       setInitialized(false);
       return;
     }
       
-    setPuzzleSize(size);
+    setPuzzleSize({rows: formData.rows, columns: formData.columns});
     setInitialized(true);
   }
 
-  async function apiCall(size) {
-    const apiResponse = await ApiRequest.createPuzzle(size);
-    console.log(apiResponse);
+  async function apiCall(formData) {
+    const apiResponse = await ApiRequest.createPuzzle(formData);
     return apiResponse;
   }
 

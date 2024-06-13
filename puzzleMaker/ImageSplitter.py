@@ -114,7 +114,7 @@ class ImageSplitter:
     def splitImage(imgPath:str, saveFolder:str, puzzleMap:PuzzleMap, borderSize:int, safeMode:bool):
         if (not safeMode):
             ImageSplitter._clearFolder(saveFolder)
-        
+    
         with Image.open(imgPath) as img:
             # img = img.resize((800, 800))
             # img = img.resize(fitTo)
@@ -136,12 +136,11 @@ class ImageSplitter:
                     x += stepX
                 y += stepY
 
-            ImageSplitter.createSplitedImageMetadata(imgPath, saveFolder, Vector2(puzzleMap.rows, puzzleMap.columns), pieceSize, margin, puzzleMap)
+            ImageSplitter.createSplitedImageMetadata(saveFolder, Vector2(puzzleMap.rows, puzzleMap.columns), pieceSize, margin, puzzleMap)
     
 
     @staticmethod
-    def createSplitedImageMetadata(imagePath:str, saveFolder:str,
-                                   puzzleSize:Vector2, pieceSize:Vector2, margin:int, puzzleMap:PuzzleMap):
+    def createSplitedImageMetadata(saveFolder:str, puzzleSize:Vector2, pieceSize:Vector2, margin:int, puzzleMap:PuzzleMap):
         def calculateJointsOffset(r, c):
             halfMarging = margin / 2
             jointOffsetStepOut = Vector2(pieceSize.x / 2 + halfMarging - halfMarging / 2, pieceSize.y / 2 + halfMarging - halfMarging / 2)
@@ -165,7 +164,6 @@ class ImageSplitter:
 
 
         data = {
-            "image": imagePath,
             "puzzleSize": { 'rows': puzzleSize[0], 'columns': puzzleSize[1] },
             "pieceSize": { 'x': pieceSize[0], 'y': pieceSize[1] },
             "margin": margin,

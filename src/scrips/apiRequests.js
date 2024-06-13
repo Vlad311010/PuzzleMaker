@@ -4,16 +4,21 @@ export default class ApiRequest {
     static axiosInstance = axios.create({
         baseURL: 'http://localhost:5000/',
         headers: {
-            "Content-type": "application/json",
+            "Content-Type": "multipart/form-data"
         }
     })
 
-    static async createPuzzle(size) {
+    static async createPuzzle(formData) {
         const body = {
-            puzzleSize: {rows: size.rows, columns: size.columns}
+            puzzleSize: {rows: formData.rows, columns: formData.columns},
+            image: formData.image
         }
 
-        let response = await ApiRequest.axiosInstance.post('createPuzzle', body)
+        const dataToSend = new FormData();
+        dataToSend.append('image', formData.image);
+        dataToSend.append('data', JSON.stringify(body));
+
+        let response = await ApiRequest.axiosInstance.post('createPuzzle', dataToSend)
             .then(function (response) {
                 return {'code': response.status }
                 // return response.data;

@@ -150,7 +150,7 @@ export default function Puzzle({seed}) {
     function onStopHandler(e, dragData) {
         if (!currentTarget.current)
             return;
-        
+
         const idx = utils.getPieceIndex(currentTarget.current);
         const connected = getConnectedPieces(idx, true);
         if (connected.length === 0) { //  moving handled by moveConnectedPieces when moving connected group.
@@ -294,7 +294,6 @@ export default function Puzzle({seed}) {
             newConnectedPieces = newConnectedPieces.filter(e => !e.includes(pieceIdx1));
             newConnectedPieces = newConnectedPieces.filter(e => !e.includes(pieceIdx2));
             
-            // newConnectedPieces.push(merge(connected1.flat(), connected2.flat()));
             newConnectedPieces.push(utils.merge(connected1, connected2));
         }
         else if (connected1.length > 0) {
@@ -319,9 +318,9 @@ export default function Puzzle({seed}) {
         const jointOffsetY = puzzleDataJson.pieces[dragged].joints[draggedTo].y;
         
         const offsetX =
-            -Math.sign(jointOffsetX) * (pieceSize.x)
+            -Math.sign(jointOffsetX) * (pieceSize.x) + Math.sign(jointOffsetX) * 2;
         const offsetY = 
-            -Math.sign(jointOffsetY) * (puzzleDataJson.pieceSize.y)
+            -Math.sign(jointOffsetY) * (puzzleDataJson.pieceSize.y) + Math.sign(jointOffsetY) * 2;
         
 
         setPiecePositionAbsolute(dragged, { 

@@ -18,8 +18,8 @@ app = Flask(__name__)
 CORS(app)
 
 
-def callPuzzleMaker(image, rows, columns):
-    PuzzleMaker.splitImage(image, rows, columns, parameters['puzzle_images_save_folder'], 1)
+def callPuzzleMaker(image, rows, columns, scale):
+    PuzzleMaker.splitImage(image, rows, columns, parameters['puzzle_images_save_folder'], 1, scale)
 
 
 @app.route('/createPuzzle', methods=['POST', 'OPTIONS'])
@@ -27,8 +27,9 @@ def callPuzzleMaker(image, rows, columns):
 def createPuzzle():
     body = loads(request.form['data'])
     image = request.files['image']
-    if PuzzleMaker.validateInput(image, body['puzzleSize']['rows'], body['puzzleSize']['columns']):
+    print("SCALE:", body['scale'])
+    if PuzzleMaker.validateInput(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale']):
         return jsonify({'errorMessage': 'Image size is too small or splitted in too many pieces'}), 400
 
-    callPuzzleMaker(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'])
+    callPuzzleMaker(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale'])
     return body, 200

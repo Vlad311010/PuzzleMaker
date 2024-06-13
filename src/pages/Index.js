@@ -39,7 +39,7 @@ export default function Index() {
   
   return (
     <>
-      <UI seed={seed} setSeed={setSeed} size={puzzleSize} initialized={initialized} onStart={hanldeStart}/>
+      <UI setSeed={setSeed} size={puzzleSize} initialized={initialized} onStart={hanldeStart}/>
       {showPuzzle}
       
     </>

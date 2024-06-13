@@ -11,7 +11,8 @@ export default class ApiRequest {
     static async createPuzzle(formData) {
         const body = {
             puzzleSize: {rows: formData.rows, columns: formData.columns},
-            image: formData.image
+            image: formData.image,
+            scale: formData.scale
         }
 
         const dataToSend = new FormData();

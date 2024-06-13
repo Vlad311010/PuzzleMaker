@@ -1,4 +1,5 @@
 import argparse
+from math import ceil
 
 from PIL import Image
 
@@ -11,15 +12,17 @@ def main(args):
     puzzleMap.solvePuzzle()
     ImageSplitter.splitImage(args.file, args.savePath, puzzleMap, args.border, args.safeMode)
 
-def splitImage(img, rows, columns, savePath, border):
+def splitImage(img, rows, columns, savePath, border, scale):
     puzzleMap = PuzzleMap(rows, columns)
     puzzleMap.solvePuzzle()
-    ImageSplitter.splitImage(img, savePath, puzzleMap, border, False)
+    ImageSplitter.splitImage(img, savePath, puzzleMap, border, False, scale)
 
-def validateInput(imgPath:str, rows, columns):
+def validateInput(imgPath:str, rows, columns, scale=1):
     puzzleMap = PuzzleMap(rows, columns)
     with Image.open(imgPath) as img:
         w, h = img.size
+        w = ceil(w * scale)
+        h = ceil(h * scale)
         pieceSize = (w / puzzleMap.columns, h / puzzleMap.rows)
         return pieceSize[0] <= 25 or pieceSize[1] <= 25
 

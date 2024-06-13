@@ -89,8 +89,11 @@ class ImageSplitter:
 
     @staticmethod
     def _addBorder(img:Image, color:tuple[int, int, int], thickness:int = 1):
-        # find edges
+        if (thickness == 0):
+            return img
+        
         r, g, b, a = img.split()
+        # find edges
         edges = a.filter(ImageFilter.FIND_EDGES)
         edges = edges.convert("RGBA")
         edgesEnchaced = edges.filter(ImageFilter.MaxFilter(thickness))
@@ -111,14 +114,15 @@ class ImageSplitter:
             os.remove(f)
 
     @staticmethod
-    def splitImage(imgPath:str, saveFolder:str, puzzleMap:PuzzleMap, borderSize:int, safeMode:bool):
+    def splitImage(imgPath:str, saveFolder:str, puzzleMap:PuzzleMap, borderSize:int, safeMode:bool, scale:int=1):
         if (not safeMode):
             ImageSplitter._clearFolder(saveFolder)
     
         with Image.open(imgPath) as img:
             # img = img.resize((800, 800))
             # img = img.resize(fitTo)
-            img = img.resize((img.size[0] // 2, img.size[1] // 2))
+            # img = img.resize((img.size[0] // 2, img.size[1] // 2))
+            img = img.resize((ceil(img.size[0] * scale), ceil(img.size[1] * scale)))
             
             w, h = img.size
             pieceSize = Vector2(w / puzzleMap.columns, h / puzzleMap.rows)

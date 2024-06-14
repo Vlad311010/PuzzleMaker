@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import Puzzle from "../components/Puzzle";
 import UI from "../components/UI";
 import ApiRequest from "../scrips/apiRequests";
 import PuzzleMock from "../components/PuzzleMock";
+import ImagePreview from "../components/ImagePreview";
 
 async function getMeta(url) {
   const img = new Image();
@@ -22,28 +23,25 @@ export default function Index() {
   const [seed, setSeed] =  useState(0);
   const [puzzleSize, setPuzzleSize] = useState({rows: 10, columns: 10});
   const [initialized, setInitialized] = useState(false)
-
-  /*useEffect(() => {
-
-    async function apiCall() {
-      const apiResponse = await ApiRequest.createPuzzle(puzzleSize);
-      console.log(apiResponse);
-    }
-    apiCall();
-
-  }, []);
-  */
-
+  const [showOriginal, setShowOriginal] = useState(false)
   
+  const selectedImage = useRef(null);
+
   const showPuzzle = initialized ? <Puzzle seed={seed} /> : <PuzzleMock />
+  const showOriginalImage = showOriginal ? <ImagePreview image={selectedImage.current} /> : <></>
   
   return (
     <>
-      <UI setSeed={setSeed} size={puzzleSize} initialized={initialized} onStart={hanldeStart}/>
+      <UI setSeed={setSeed} size={puzzleSize} setShowOriginal={setShowOriginal} onImageSelect={onImageSelect} initialized={initialized} onStart={hanldeStart}/>
+      {showOriginalImage}
       {showPuzzle}
-      
     </>
   );
+
+  function onImageSelect(e, image) {
+    e.preventDefault()
+    selectedImage.current = image;
+  }
 
   async function hanldeStart(formData) {
     const responce = await apiCall(formData);
@@ -51,7 +49,8 @@ export default function Index() {
       setInitialized(false);
       return;
     }
-      
+     
+    
     setPuzzleSize({rows: formData.rows, columns: formData.columns});
     setInitialized(true);
   }

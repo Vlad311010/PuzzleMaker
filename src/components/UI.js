@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-export default function UI({setSeed, size, initialized, onStart}) {
+export default function UI({setSeed, size, setShowOriginal, onImageSelect, initialized, onStart}) {
     const seedInput = useRef(null);
     const rowsInput = useRef(null);
     const columnsInput = useRef(null);
@@ -23,7 +23,7 @@ export default function UI({setSeed, size, initialized, onStart}) {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <span className="nav-link me-2" style={{ width:'120px' }}>Show Original</span>
+                            <span onClick={handleShowOriginal} className="nav-link me-2" style={{ width:'120px' }}>Show Original</span>
                         </li>
                         <form>
                             <li className="nav-item d-flex">
@@ -58,8 +58,17 @@ export default function UI({setSeed, size, initialized, onStart}) {
         </nav>
     );
 
+    
+    function handleShowOriginal(e) {
+        e.preventDefault();
 
-    function handleReset(e) {
+        if (selectedFile.current)
+
+
+        setShowOriginal(v => !v);
+    }
+
+    function handleReset(e, seedInputValue) {
         e.preventDefault();
 
         const inputSeed = seedInput.current.value.match(numbersOnlyRegex);
@@ -106,5 +115,6 @@ export default function UI({setSeed, size, initialized, onStart}) {
 
     function onFileChange(e) {
         selectedFile.current = e.target.files[0];
+        onImageSelect(e, selectedFile.current)
     }
 }

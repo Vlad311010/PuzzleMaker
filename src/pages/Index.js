@@ -32,18 +32,41 @@ export default function Index() {
   
   return (
     <>
-      <UI setSeed={setSeed} size={puzzleSize} setShowOriginal={setShowOriginal} onImageSelect={onImageSelect} initialized={initialized} onStart={hanldeStart}/>
+      <UI setSeed={setSeed} size={puzzleSize} initialized={initialized} handleShowOriginal={handleShowOriginal} handleFileChange={onImageSelect} createCallback={handleCreate}/>
       {showOriginalImage}
       {showPuzzle}
     </>
   );
 
+  
+  function handleShowOriginal(e) {
+    e.preventDefault();
+    
+    if (selectedImage.current)
+      setShowOriginal(v => !v);
+  }
+  
   function onImageSelect(e, image) {
     e.preventDefault()
     selectedImage.current = image;
   }
 
-  async function hanldeStart(formData) {
+  function handleCreate(rowsMatch, columnsMatch, scaleMatch) {
+    if (selectedImage.current == null) {
+      return;
+    }
+
+    if (rowsMatch && columnsMatch) {
+      const formData = new Object();
+      formData['rows'] = parseInt(rowsMatch[0]);
+      formData['columns'] = parseInt(columnsMatch[0]);
+      formData['image'] = selectedImage.current;
+      formData['scale'] = scaleMatch ? parseFloat(scaleMatch[0]) : 1;
+      generatePuzzle(formData);
+    }
+  }
+
+  async function generatePuzzle(formData) {
     const responce = await apiCall(formData);
     if (Object.keys(responce).length === 0 || responce.code < 200 || responce.code >= 300) {
       setInitialized(false);

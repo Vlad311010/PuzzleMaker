@@ -1,12 +1,12 @@
 import { useRef } from "react";
 
-export default function UI({setSeed, size, setShowOriginal, onImageSelect, initialized, onStart}) {
+export default function UI({size, setSeed, handleShowOriginal, handleFileChange, createCallback}) {
     const seedInput = useRef(null);
     const rowsInput = useRef(null);
     const columnsInput = useRef(null);
     const scaleInput = useRef(null);
     const imageInput = useRef(null);
-    const selectedFile = useRef(null);
+    
 
     const numbersOnlyRegex = /^\d*\d+$/;
     const number01Regex = /^(0(\.\d+)?|1(\.0+)?)$/
@@ -46,8 +46,8 @@ export default function UI({setSeed, size, setShowOriginal, onImageSelect, initi
 
                                 <span className="d-flex" style={{ width:'40%' }}>
                                     <label htmlFor="formFile" className="nav-link active me-2">Image:</label>
-                                    <input ref={imageInput} onChange={onFileChange} className="form-control h-100 me-2" type="file" id="formFile"></input>
-                                    <button onClick={handleStart} className="btn btn-outline-success" >Create</button>
+                                    <input ref={imageInput} onChange={(e) => handleFileChange(e, e.target.files[0])} className="form-control h-100 me-2" type="file" id="formFile"></input>
+                                    <button onClick={handleCreateCallback} className="btn btn-outline-success" >Create</button>
                                 </span>
 
                             </li>
@@ -59,16 +59,9 @@ export default function UI({setSeed, size, setShowOriginal, onImageSelect, initi
     );
 
     
-    function handleShowOriginal(e) {
-        e.preventDefault();
+    
 
-        if (selectedFile.current)
-
-
-        setShowOriginal(v => !v);
-    }
-
-    function handleReset(e, seedInputValue) {
+    function handleReset(e) {
         e.preventDefault();
 
         const inputSeed = seedInput.current.value.match(numbersOnlyRegex);
@@ -78,43 +71,14 @@ export default function UI({setSeed, size, setShowOriginal, onImageSelect, initi
         setSeed(parseInt(seedInput.current.value));
     }
 
-    function handleStart(e) {
+    function handleCreateCallback(e) {
         e.preventDefault();
 
-        if (selectedFile.current == null) {
-            return;
-        }
-
-        const formData = new Object();
-        
         const rows = rowsInput.current.value.match(numbersOnlyRegex);
         const columns = columnsInput.current.value.match(numbersOnlyRegex);
-
         scaleInput.current.value = scaleInput.current.value.replace(',', '.');
         const scale = scaleInput.current.value.match(number01Regex);
 
-        if (rows && columns) {
-            let rows =  parseInt(rowsInput.current.value);
-            let columns = parseInt(columnsInput.current.value);
-            
-            if (rows < 2)
-                rows = 2;
-            if (columns < 2)
-                columns = 2;
-
-
-            formData['rows'] = parseInt(rowsInput.current.value);
-            formData['columns'] = parseInt(columnsInput.current.value);
-            formData['image'] = selectedFile.current;
-            formData['scale'] = scale ? parseFloat(scaleInput.current.value) : 1;
-
-            onStart(formData);
-            // onStart({rows: rows, columns: columns, image: selectedFile.current, resizeWidth: width, resizeHeight: height});
-        }
-    }
-
-    function onFileChange(e) {
-        selectedFile.current = e.target.files[0];
-        onImageSelect(e, selectedFile.current)
+        createCallback(rows, columns, scale);
     }
 }

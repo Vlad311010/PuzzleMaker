@@ -32,6 +32,7 @@ export default function Puzzle({seed}) {
     const [connectedPieces, setConectedPieces] = useState([]);
 
     
+    const puzzleSize = puzzleDataJson.puzzleSize;
     const pieceSize = puzzleDataJson.pieceSize;
     const margin = puzzleDataJson.margin;
     const jointDetectionRadius = margin / 2;
@@ -86,9 +87,13 @@ export default function Puzzle({seed}) {
         );
     }
     
-    
+    const scaleW = 1.7;
+    const scaleH = 2;
+    const width = puzzleSize.columns * (pieceSize.x + margin) * scaleW;
+    const height = puzzleSize.rows * (pieceSize.y + margin) * scaleH;
+    console.log(pieceSize.x + margin, width);
     return (
-        <div className="PuzzleWindow bg-dark bg-gradient border-gradient" >
+        <div className="PuzzleWindow bg-dark bg-gradient border-gradient" style={{minWidth:width+'px', minHeight:height+'px'}} >
             {puzzlePieces}
         </div>
     )
@@ -153,6 +158,7 @@ export default function Puzzle({seed}) {
         if (!currentTarget.current)
             return;
 
+        currentTarget.current.classList.remove("Focused");
         const idx = utils.getPieceIndex(currentTarget.current);
         const connected = getConnectedPieces(idx, true);
         if (connected.length === 0) { //  moving handled by moveConnectedPieces when moving connected group.

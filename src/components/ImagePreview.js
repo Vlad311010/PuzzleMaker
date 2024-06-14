@@ -1,8 +1,14 @@
+import Draggable from "react-draggable";
 
 export default function ImagePreview({image}) {
     const srcImage = URL.createObjectURL(image);
 
-    return (<>
-        <img className="ImagePreview" src={srcImage}></img>
-        </>) 
+    return (
+        <Draggable
+            axis="both"
+            grid={[5, 5]}
+            scale={1}>
+                <img draggable="false" className="ImagePreview Draggable" src={srcImage} ></img>
+        </Draggable>
+    ) 
 }

@@ -12,12 +12,12 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
     const number01Regex = /^(0(\.\d+)?|1(\.0+)?)$/
 
     const resetBtn = initialized ? 
-        <button onClick={handleReset} className="btn btn-outline-warning">Reset</button> 
+        <button onClick={handleReset} autocomplete="off" className="btn btn-outline-warning">Reset</button> 
         :
-        <button onClick={handleReset} className="btn btn-outline-warning" disabled>Reset</button> 
+        <button onClick={handleReset} autocomplete="off" className="btn btn-outline-warning" disabled>Reset</button> 
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{ width:'100%' }}>
             <div className="container-fluid">
                 <span className="navbar-brand">PuzzleMaker1.0</span>
                 <div className="collapse navbar-collapse" id="navbarNav">
@@ -28,7 +28,7 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
                         <form>
                             <li className="nav-item d-flex">
                                 <span className="d-flex" style={{ width:'20%' }}>
-                                    <input ref={seedInput} className="form-control-sm w-50 me-2"  placeholder="Seed" aria-label="Search"></input>
+                                    <input ref={seedInput} autocomplete="off" className="form-control-sm w-50 me-2"  placeholder="Seed" aria-label="Search"></input>
                                     {resetBtn}
                                 </span>
 
@@ -36,12 +36,12 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
                                     <label htmlFor="sizeR" className="nav-link active">Puzzle Size:</label>
                                     <input id="sizeR" ref={rowsInput} className="form-control-sm w-25" placeholder={initialized ? size.rows : "R"} aria-label="SizeR"></input>
                                     <h4 type="text" className="text-white me-1">×</h4>
-                                    <input ref={columnsInput} className="form-control-sm w-25" placeholder={initialized ? size.columns : "C"} aria-label="SizeC"></input>
+                                    <input ref={columnsInput} autocomplete="off" className="form-control-sm w-25" placeholder={initialized ? size.columns : "C"} aria-label="SizeC"></input>
                                 </span>
 
                                 <span className="d-flex" style={{ width:'15%' }}>
                                     <label htmlFor="Resize" className="nav-link active">Scale (optional):</label>
-                                    <input ref={scaleInput} id="Resize" className="form-control-sm w-25 me-1" placeholder="0-1"></input>
+                                    <input ref={scaleInput} autocomplete="off" id="Resize" className="form-control-sm w-25 me-1" placeholder="0-1"></input>
                                 </span>
 
                                 <span className="d-flex" style={{ width:'40%' }}>

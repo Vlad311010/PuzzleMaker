@@ -24,11 +24,11 @@ export default function Index() {
   const [puzzleSize, setPuzzleSize] = useState({rows: 10, columns: 10});
   const [initialized, setInitialized] = useState(false)
   const [showOriginal, setShowOriginal] = useState(false)
+  const [selectedImage, setSelectedImage] = useState(null)
   
-  const selectedImage = useRef(null);
 
   const showPuzzle = initialized ? <Puzzle seed={seed} /> : <PuzzleMock />
-  const showOriginalImage = showOriginal ? <ImagePreview image={selectedImage.current} /> : <></>
+  const showOriginalImage = showOriginal ? <ImagePreview image={selectedImage} /> : <></>
   
   return (
     <>
@@ -42,17 +42,17 @@ export default function Index() {
   function handleShowOriginal(e) {
     e.preventDefault();
     
-    if (selectedImage.current)
+    if (selectedImage)
       setShowOriginal(v => !v);
   }
   
   function onImageSelect(e, image) {
     e.preventDefault()
-    selectedImage.current = image;
+    setSelectedImage(image);
   }
 
   function handleCreate(rowsMatch, columnsMatch, scaleMatch) {
-    if (selectedImage.current == null) {
+    if (selectedImage == null) {
       return;
     }
 
@@ -62,7 +62,7 @@ export default function Index() {
       const columns = parseInt(columnsMatch[0]);
       formData['rows'] = rows <= 1 ? 2 : rows;
       formData['columns'] = columns <= 1 ? 2 : columns; 
-      formData['image'] = selectedImage.current;
+      formData['image'] = selectedImage;
       formData['scale'] = scaleMatch ? parseFloat(scaleMatch[0]) : 1;
       generatePuzzle(formData);
     }

@@ -58,8 +58,10 @@ export default function Index() {
 
     if (rowsMatch && columnsMatch) {
       const formData = new Object();
-      formData['rows'] = parseInt(rowsMatch[0]);
-      formData['columns'] = parseInt(columnsMatch[0]);
+      const rows = parseInt(rowsMatch[0]);
+      const columns = parseInt(columnsMatch[0]);
+      formData['rows'] = rows <= 1 ? 2 : rows;
+      formData['columns'] = columns <= 1 ? 2 : columns; 
       formData['image'] = selectedImage.current;
       formData['scale'] = scaleMatch ? parseFloat(scaleMatch[0]) : 1;
       generatePuzzle(formData);

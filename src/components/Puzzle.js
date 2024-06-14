@@ -38,9 +38,7 @@ export default function Puzzle({seed}) {
     
     const debugHighlight = true;
 
-    // console.log(puzzleDataJson);
-    // console.log(puzzleData)
-    // console.log(connectedPieces);
+
 
     const importAll = (requireContext) => {
         let images = {};
@@ -73,12 +71,10 @@ export default function Puzzle({seed}) {
             if (event.key === 'f') {
                 event.preventDefault();
                 disconnectAllPieces();
-                // restartPuzzle(seed);
             }
         })
 
         restartPuzzle(seed);
-        // setClientPos();
         
     }, [seed]);
 
@@ -126,11 +122,17 @@ export default function Puzzle({seed}) {
         if (!currentTarget.current)
             return;
 
+        
         const {deltaX, deltaY} = dragData;
         
         const idx = utils.getPieceIndex(currentTarget.current);
         const connected = getConnectedPieces(idx, false);
         moveConnectedPieces(connected, deltaX, deltaY);
+
+        currentTarget.current.classList.add("Focused");
+        for (let i = 0; i < connected.length; i++) {
+            utils.getPieceElementByIdx(connected[i]).classList.add("Focused");
+        }
 
         if (!debugHighlight)
             return;

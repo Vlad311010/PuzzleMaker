@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-export default function UI({size, setSeed, handleShowOriginal, handleFileChange, createCallback}) {
+export default function UI({size, setSeed, initialized, handleShowOriginal, handleFileChange, createCallback}) {
     const seedInput = useRef(null);
     const rowsInput = useRef(null);
     const columnsInput = useRef(null);

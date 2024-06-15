@@ -12,9 +12,9 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
     const number01Regex = /^(0(\.\d+)?|1(\.0+)?)$/
 
     const resetBtn = initialized ? 
-        <button onClick={handleReset} autocomplete="off" className="btn btn-outline-warning">Reset</button> 
+        <button onClick={handleReset} autoComplete="off" className="btn btn-outline-warning">Reset</button> 
         :
-        <button onClick={handleReset} autocomplete="off" className="btn btn-outline-warning" disabled>Reset</button> 
+        <button onClick={handleReset} autoComplete="off" className="btn btn-outline-warning" disabled>Reset</button> 
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{ width:'100%' }}>
@@ -28,7 +28,7 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
                         <form>
                             <li className="nav-item d-flex">
                                 <span className="d-flex" style={{ width:'20%' }}>
-                                    <input ref={seedInput} autocomplete="off" className="form-control-sm w-50 me-2"  placeholder="Seed" aria-label="Search"></input>
+                                    <input ref={seedInput} autoComplete="off" className="form-control-sm w-50 me-2"  placeholder="Seed" aria-label="Search"></input>
                                     {resetBtn}
                                 </span>
 
@@ -36,18 +36,18 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
                                     <label htmlFor="sizeR" className="nav-link active">Puzzle Size:</label>
                                     <input id="sizeR" ref={rowsInput} className="form-control-sm w-25" placeholder={initialized ? size.rows : "R"} aria-label="SizeR"></input>
                                     <h4 type="text" className="text-white me-1">×</h4>
-                                    <input ref={columnsInput} autocomplete="off" className="form-control-sm w-25" placeholder={initialized ? size.columns : "C"} aria-label="SizeC"></input>
+                                    <input ref={columnsInput} autoComplete="off" className="form-control-sm w-25" placeholder={initialized ? size.columns : "C"} aria-label="SizeC"></input>
                                 </span>
 
                                 <span className="d-flex" style={{ width:'15%' }}>
                                     <label htmlFor="Resize" className="nav-link active">Scale (optional):</label>
-                                    <input ref={scaleInput} autocomplete="off" id="Resize" className="form-control-sm w-25 me-1" placeholder="0-1"></input>
+                                    <input ref={scaleInput} autoComplete="off" id="Resize" className="form-control-sm w-25 me-1" placeholder="0-1"></input>
                                 </span>
 
                                 <span className="d-flex" style={{ width:'40%' }}>
                                     <label htmlFor="formFile" className="nav-link active me-2">Image:</label>
                                     <input ref={imageInput} onChange={(e) => handleFileChange(e, e.target.files[0])} className="form-control h-100 me-2" type="file" id="formFile"></input>
-                                    <button onClick={handleCreateCallback} className="btn btn-outline-success" >Create</button>
+                                    <button onClick={async (e) => handleCreateCallback(e)} className="btn btn-outline-success" >Create</button>
                                 </span>
 
                             </li>
@@ -71,7 +71,7 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
         setSeed(parseInt(seedInput.current.value));
     }
 
-    function handleCreateCallback(e) {
+    async function handleCreateCallback(e) {
         e.preventDefault();
 
         const rows = rowsInput.current.value.match(numbersOnlyRegex);
@@ -79,6 +79,6 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
         scaleInput.current.value = scaleInput.current.value.replace(',', '.');
         const scale = scaleInput.current.value.match(number01Regex);
 
-        createCallback(rows, columns, scale);
+        await createCallback(rows, columns, scale);
     }
 }

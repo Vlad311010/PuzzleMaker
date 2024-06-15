@@ -20,19 +20,20 @@ async function getNaturalSize(url) {
 
 
 export default function Index() {
-  const [seed, setSeed] =  useState(0);
+  const [seed, setSeed] = useState(0);
   const [puzzleSize, setPuzzleSize] = useState({rows: 10, columns: 10});
-  const [initialized, setInitialized] = useState(false)
-  const [showOriginal, setShowOriginal] = useState(false)
-  const [selectedImage, setSelectedImage] = useState(null)
+  const [showOriginal, setShowOriginal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [pieces, setPieces] = useState({});
   
 
-  const showPuzzle = initialized ? <Puzzle seed={seed} /> : <PuzzleMock />
+  const valid = pieces && Object.keys(pieces).length > 0; 
+  const showPuzzle = valid ? <Puzzle seed={seed} pieces={pieces} /> : <PuzzleMock />
   const showOriginalImage = showOriginal ? <ImagePreview image={selectedImage} /> : <></>
-  
+
   return (
     <>
-      <UI setSeed={setSeed} size={puzzleSize} initialized={initialized} handleShowOriginal={handleShowOriginal} handleFileChange={onImageSelect} createCallback={handleCreate}/>
+      <UI setSeed={setSeed} size={puzzleSize} initialized={valid} handleShowOriginal={handleShowOriginal} handleFileChange={onImageSelect} createCallback={handleCreate}/>
       {showOriginalImage}
       {showPuzzle}
     </>
@@ -51,7 +52,7 @@ export default function Index() {
     setSelectedImage(image);
   }
 
-  function handleCreate(rowsMatch, columnsMatch, scaleMatch) {
+  async function handleCreate(rowsMatch, columnsMatch, scaleMatch) {
     if (selectedImage == null) {
       return;
     }
@@ -64,20 +65,21 @@ export default function Index() {
       formData['columns'] = columns <= 1 ? 2 : columns; 
       formData['image'] = selectedImage;
       formData['scale'] = scaleMatch ? parseFloat(scaleMatch[0]) : 1;
-      generatePuzzle(formData);
+      const responce = await generatePuzzle(formData);
+      
+      setPieces(responce.files);
     }
   }
 
   async function generatePuzzle(formData) {
     const responce = await apiCall(formData);
     if (Object.keys(responce).length === 0 || responce.code < 200 || responce.code >= 300) {
-      setInitialized(false);
-      return;
+      return [];
     }
      
     
     setPuzzleSize({rows: formData.rows, columns: formData.columns});
-    setInitialized(true);
+    return responce;
   }
 
   async function apiCall(formData) {

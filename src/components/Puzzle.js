@@ -1,14 +1,14 @@
-import puzzleDataJson from "../puzzlePieces/puzzleData.json"
 import PuzzlePiece from "./PuzzlePiece"
 import { useState, useRef, useEffect } from 'react'
 import * as utils from '../scrips/puzzleUtils'; 
 import PRNG from "../scrips/prng";
 
 
-function createDictionary(rng) {
+function createDictionary(rng, dataJson) {
     const dictionary = new Object();
-    let limiter = 500;
-    const pieces = Object.keys(puzzleDataJson.pieces);
+
+    let limiter = 999;
+    const pieces = Object.keys(dataJson.pieces);
     utils.shuffleArray(pieces, rng);
     for (let i = 0; i < pieces.length; i++) {
         const idx = pieces[i];
@@ -22,16 +22,17 @@ function createDictionary(rng) {
 }
 
 
-export default function Puzzle({seed}) {
+export default function Puzzle({seed, pieces}) {
     const currentTarget = useRef(null);
     const updated = useRef(false);
     const dragStart = useRef({x:0, y:0});
     let rng = new PRNG(seed);
-    
-    const [puzzleData, setPuzzleData] = useState(createDictionary(rng));
+
+    const puzzleDataJson = JSON.parse(pieces['puzzleData']);
+
+    const [puzzleData, setPuzzleData] = useState(createDictionary(rng, puzzleDataJson));
     const [connectedPieces, setConectedPieces] = useState([]);
 
-    
     const puzzleSize = puzzleDataJson.puzzleSize;
     const pieceSize = puzzleDataJson.pieceSize;
     const margin = puzzleDataJson.margin;
@@ -39,35 +40,7 @@ export default function Puzzle({seed}) {
     
     const debugHighlight = true;
 
-
-
-    const importAll = (requireContext) => {
-        let images = {};
-        requireContext.keys().forEach((key) => {
-          images[key.replace('./', '')] = requireContext(key);
-        });
-        return images;
-      };
-      
-    const images = importAll(require.context('../puzzlePieces/', false, /\.(png|jpe?g|svg)$/));
-
     useEffect(() => {
-        function setClientPos() {
-            const copy = structuredClone(puzzleData);
-            for (let idx in puzzleData) {
-                const element = utils.getPieceElementByIdx(idx);
-                const clientPos = utils.getElementPositionClient(element);
-                copy[idx] = {
-                    ...copy[idx],
-                    clientPosX: clientPos.x,
-                    clientPosY: clientPos.y,
-                    diffX: -clientPos.x,
-                    diffY: -clientPos.y
-                };
-            }
-            setPuzzleData(copy);
-        }
-
         document.addEventListener("keydown", (event) => {
             if (event.key === 'f') {
                 event.preventDefault();
@@ -77,12 +50,13 @@ export default function Puzzle({seed}) {
 
         restartPuzzle(seed);
         
-    }, [seed]);
+    }, [seed, pieces]);
 
+    
     const puzzlePieces = [];
-    for (let k in puzzleData) {
+    for (let k in puzzleData) {        
         puzzlePieces.push(
-            <PuzzlePiece key={k} idx={k} image={images[`${k}.png`]} position={puzzleData[k]} 
+            <PuzzlePiece key={k} idx={k} image={pieces[k]} position={puzzleData[k]} 
             onStart={onStartHandler} onStop={onStopHandler} onDrag={dragHandler} />
         );
     }
@@ -91,7 +65,7 @@ export default function Puzzle({seed}) {
     const scaleH = 2;
     const width = puzzleSize.columns * (pieceSize.x + margin) * scaleW;
     const height = puzzleSize.rows * (pieceSize.y + margin) * scaleH;
-    console.log(pieceSize.x + margin, width);
+
     return (
         <div className="PuzzleWindow bg-dark bg-gradient border-gradient" style={{minWidth:width+'px', minHeight:height+'px'}} >
             {puzzlePieces}
@@ -350,7 +324,7 @@ export default function Puzzle({seed}) {
         randomSeed = randomSeed;
         disconnectAllPieces();
         rng = new PRNG(randomSeed);
-        setPuzzleData(createDictionary(rng));
+        setPuzzleData(createDictionary(rng, puzzleDataJson));
         updated.current = false;
     }
 

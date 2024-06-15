@@ -1,4 +1,5 @@
 import axios from 'axios';
+import JSZip from 'jszip';
 
 export default class ApiRequest {
     static axiosInstance = axios.create({
@@ -19,15 +20,15 @@ export default class ApiRequest {
         dataToSend.append('image', formData.image);
         dataToSend.append('data', JSON.stringify(body));
 
-        let response = await ApiRequest.axiosInstance.post('createPuzzle', dataToSend)
-            .then(function (response) {
-                return {'code': response.status }
-                // return response.data;
-
+        
+        let response = await ApiRequest.axiosInstance.post('createPuzzle', dataToSend, { responseType: 'blob' })
+            .then(async function (response) {
+                const files = await ApiRequest.handleZipFile(response.data);
+                return {'code': response.status, 'files': files};
             })
             .catch(function (error) {
                 console.log(error);
-                const data = new Object();
+                const data = {};
                 if (error.response) {
                     data['code'] = error.response.status;
                     console.log(error.response.status)
@@ -38,6 +39,33 @@ export default class ApiRequest {
         return response;
     }
 
+    static async handleZipFile(file) {
+        const zip = new JSZip();
+        
+        try {
+            const files = new Object();
+            const content = await zip.loadAsync(file);
+            /*content.forEach(async (relativePath, file) => {
+                if (!file.dir) { 
+                    const fileContent = await file.async("base64");
+                    files[file.name.split('.')[0]] = fileContent;
+                    // console.log(`File: ${relativePath}, Content: ${fileContent}`);
+                } 
+            });*/
+            const filePromises = Object.entries(content.files)
+            .map(async ([relativePath, file]) => {
+                const type = file.name.split('.')[1] === 'json' ? 'string' : 'base64';
+                const fileContent = await file.async(type);
+                files[file.name.split('.')[0]] = fileContent;
+            });
+
+            await Promise.all(filePromises);
+            return files;
+        } catch (err) {
+            console.error("Error reading zip file:", err);
+            return null;
+        }
+    }
 
 
 }

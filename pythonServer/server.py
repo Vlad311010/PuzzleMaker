@@ -9,8 +9,6 @@ import pathlib
 from flask import Flask, jsonify, request, send_file, make_response
 from flask_cors import CORS, cross_origin
 
-
-
 parameters = {}
 with open('./serverParameters.json') as f:
     parameters = load(f)
@@ -36,21 +34,9 @@ def createPuzzle():
 
     callPuzzleMaker(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale'])
     createPiecesZip()
-    # print(pathlib.Path(__file__).resolve())
-    # saveFolderAbsolutePath = join(pathlib.Path().resolve(), sep.join(parameters['save_folder'].split(sep)[1:]))
-    # print("Absolute", saveFolderAbsolutePath)
-    # commonPath = commonpath([saveFolderAbsolutePath, pathlib.Path().resolve()])
-    # print("Common", commonPath)
-    # saveFolderRelative = saveFolderAbsolutePath.replace(commonPath, ".")
-    # print("Relative", saveFolderRelative)
-    # return send_file(saveFolderAbsolutePath, mimetype='application/zip')
-
-    # with open(join(parameters['save_folder'], parameters['zip_file_name']), 'rb') as responceFile:
-    # response = make_response(send_file(r'C:\Users\Vlad\Desktop\testApp\puzzle\pythonServer\generatedData\pieces.zip', mimetype='application/zip'))
-    # response.headers['Content-Type'] = 'application/javascript; charset=utf-8'
-    # return response
-    return send_file(r'C:\Users\Vlad\Desktop\testApp\puzzle\pythonServer\generatedData\pieces.zip', mimetype='application/zip')
-    # return body, 200
+    saveFolderAbsolutePath = relativePathToAbsolute(parameters['save_folder'])
+    
+    return send_file(join(saveFolderAbsolutePath, parameters['zip_file_name']), mimetype='application/zip')
 
 
 def createPiecesZip():
@@ -62,3 +48,6 @@ def createPiecesZip():
             fileName = file.split(sep)[-1]
             zipfile.write(file, arcname=fileName)
             
+def relativePathToAbsolute(relativePath):
+    absolutePath = join(pathlib.Path().resolve(__file__), sep.join(relativePath.split(sep)[1:]))
+    return absolutePath

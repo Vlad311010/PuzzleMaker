@@ -27,11 +27,11 @@ export default class ApiRequest {
                 return {'code': response.status, 'files': files};
             })
             .catch(function (error) {
-                console.log(error);
                 const data = {};
+                console.log(error.response?.data);
+                console.log(error.message);
                 if (error.response) {
                     data['code'] = error.response.status;
-                    console.log(error.response.status)
                 }
                 return data;
             });
@@ -49,7 +49,6 @@ export default class ApiRequest {
             .map(async ([relativePath, file]) => {
                 const type = file.name.split('.')[1] === 'json' ? 'string' : 'base64';
                 const fileContent = await file.async(type);
-                console.log(fileContent);
                 files[file.name.split('.')[0]] = fileContent;
             });
 

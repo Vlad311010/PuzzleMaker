@@ -25,7 +25,7 @@ export default function Index() {
   const [showOriginal, setShowOriginal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [pieces, setPieces] = useState({});
-  
+  const [processingRequest, setProcessingRequest] = useState(false);
 
   const valid = pieces && Object.keys(pieces).length > 0; 
   const showPuzzle = valid ? <Puzzle seed={seed} pieces={pieces} /> : <PuzzleMock />
@@ -33,7 +33,7 @@ export default function Index() {
 
   return (
     <>
-      <UI setSeed={setSeed} size={puzzleSize} initialized={valid} handleShowOriginal={handleShowOriginal} handleFileChange={onImageSelect} createCallback={handleCreate}/>
+      <UI setSeed={setSeed} size={puzzleSize} initialized={valid} canInitiateRequest={!processingRequest} handleShowOriginal={handleShowOriginal} handleFileChange={onImageSelect} createCallback={handleCreate}/>
       {showOriginalImage}
       {showPuzzle}
     </>
@@ -67,6 +67,7 @@ export default function Index() {
       formData['scale'] = scaleMatch ? parseFloat(scaleMatch[0]) : 1;
       const responce = await generatePuzzle(formData);
       
+      setProcessingRequest(false);
       setPieces(responce.files);
     }
   }
@@ -83,6 +84,7 @@ export default function Index() {
   }
 
   async function apiCall(formData) {
+    setProcessingRequest(true);
     const apiResponse = await ApiRequest.createPuzzle(formData);
     return apiResponse;
   }

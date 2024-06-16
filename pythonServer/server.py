@@ -1,12 +1,11 @@
 from json import load, loads
 from sys import path as syspath
-from os import listdir
-from os.path import isfile, join, sep, commonpath
+from os.path import join, sep
 import glob
 from zipfile import ZipFile
 import pathlib
 
-from flask import Flask, jsonify, request, send_file, make_response
+from flask import Flask, request, send_file
 from flask_cors import CORS, cross_origin
 
 parameters = {}
@@ -30,7 +29,7 @@ def createPuzzle():
     body = loads(request.form['data'])
     image = request.files['image']
     if PuzzleMaker.validateInput(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale']):
-        return jsonify({'errorMessage': 'Image size is too small or splitted in too many pieces'}), 400
+        return {'errorMessage': 'Image size is too small or splitted in too many pieces'}, 400
 
     callPuzzleMaker(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale'])
     createPiecesZip()

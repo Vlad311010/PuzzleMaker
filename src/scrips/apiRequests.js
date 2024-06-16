@@ -45,17 +45,11 @@ export default class ApiRequest {
         try {
             const files = new Object();
             const content = await zip.loadAsync(file);
-            /*content.forEach(async (relativePath, file) => {
-                if (!file.dir) { 
-                    const fileContent = await file.async("base64");
-                    files[file.name.split('.')[0]] = fileContent;
-                    // console.log(`File: ${relativePath}, Content: ${fileContent}`);
-                } 
-            });*/
             const filePromises = Object.entries(content.files)
             .map(async ([relativePath, file]) => {
                 const type = file.name.split('.')[1] === 'json' ? 'string' : 'base64';
                 const fileContent = await file.async(type);
+                console.log(fileContent);
                 files[file.name.split('.')[0]] = fileContent;
             });
 

@@ -31,20 +31,18 @@ def callPuzzleMaker(image, rows, columns, scale):
 def createPuzzle():
     body = loads(request.form['data'])
     image = request.files['image']
-    print("SCALE:", body['scale'])
     if PuzzleMaker.validateInput(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale']):
         return jsonify({'errorMessage': 'Image size is too small or splitted in too many pieces'}), 400
 
     callPuzzleMaker(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale'])
     createPiecesZip()
-    print("DEBUG")
-    print(pathlib.Path(__file__).resolve())
-    saveFolderAbsolutePath = join(pathlib.Path().resolve(), sep.join(parameters['save_folder'].split(sep)[1:]))
-    print("Absolute", saveFolderAbsolutePath)
-    commonPath = commonpath([saveFolderAbsolutePath, pathlib.Path().resolve()])
-    print("Common", commonPath)
-    saveFolderRelative = saveFolderAbsolutePath.replace(commonPath, ".")
-    print("Relative", saveFolderRelative)
+    # print(pathlib.Path(__file__).resolve())
+    # saveFolderAbsolutePath = join(pathlib.Path().resolve(), sep.join(parameters['save_folder'].split(sep)[1:]))
+    # print("Absolute", saveFolderAbsolutePath)
+    # commonPath = commonpath([saveFolderAbsolutePath, pathlib.Path().resolve()])
+    # print("Common", commonPath)
+    # saveFolderRelative = saveFolderAbsolutePath.replace(commonPath, ".")
+    # print("Relative", saveFolderRelative)
     # return send_file(saveFolderAbsolutePath, mimetype='application/zip')
 
     # with open(join(parameters['save_folder'], parameters['zip_file_name']), 'rb') as responceFile:

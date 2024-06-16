@@ -34,7 +34,7 @@ export default function UI({size, setSeed, initialized, handleShowOriginal, hand
 
                                 <span className="d-flex" style={{ width:'25%' }}>
                                     <label htmlFor="sizeR" className="nav-link active">Puzzle Size:</label>
-                                    <input id="sizeR" ref={rowsInput} className="form-control-sm w-25" placeholder={initialized ? size.rows : "R"} aria-label="SizeR"></input>
+                                    <input id="sizeR" autoComplete="off" ref={rowsInput} className="form-control-sm w-25" placeholder={initialized ? size.rows : "R"} aria-label="SizeR"></input>
                                     <h4 type="text" className="text-white me-1">×</h4>
                                     <input ref={columnsInput} autoComplete="off" className="form-control-sm w-25" placeholder={initialized ? size.columns : "C"} aria-label="SizeC"></input>
                                 </span>

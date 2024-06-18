@@ -17,7 +17,7 @@ def splitImage(img, rows, columns, savePath, border, scale):
     puzzleMap.solvePuzzle()
     ImageSplitter.splitImage(img, savePath, puzzleMap, border, False, scale)
 
-def validateInput(imgPath:str, rows, columns, scale=1):
+def validateParameters(imgPath:str, rows, columns, scale=1):
     puzzleMap = PuzzleMap(rows, columns)
     with Image.open(imgPath) as img:
         w, h = img.size
@@ -47,6 +47,3 @@ def arguments_parser():
 if (__name__ == "__main__"):    
     arguments = arguments_parser()
     main(arguments)
-
-    # python PuzzleMaker.py C:\Users\Vlad\Desktop\testApp\puzzle\src\images\sampleImage00.png C:\Users\Vlad\Desktop\testApp\puzzle\src\puzzlePieces\ -s 8 8 --no-safe-mode 
-    # python PuzzleMaker.py C:\Users\Vlad\Desktop\testApp\puzzle\src\images\sampleImage00.png .\src\puzzlePieces\ -s 8 8 --no-safe-mode 

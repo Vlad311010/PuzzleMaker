@@ -1,7 +1,7 @@
 import os
 import glob
 from typing import Final
-from json import dumps, dump
+from json import dump
 from math import ceil
 
 from PIL import Image, ImageFilter, ImageOps 
@@ -62,7 +62,6 @@ class ImageSplitter:
         elif (joints[Sides.BOTTOM] == Connection.IN):
             insertJoint(im, jointVerticalNegative, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1 - negativeOffset)
 
-        # im.show()
         return im
 
     @staticmethod
@@ -92,7 +91,7 @@ class ImageSplitter:
         if (thickness == 0):
             return img
         
-        r, g, b, a = img.split()
+        _, _, _, a = img.split()
         # find edges
         edges = a.filter(ImageFilter.FIND_EDGES)
         edges = edges.convert("RGBA")
@@ -119,9 +118,6 @@ class ImageSplitter:
             ImageSplitter._clearFolder(saveFolder)
     
         with Image.open(imgPath) as img:
-            # img = img.resize((800, 800))
-            # img = img.resize(fitTo)
-            # img = img.resize((img.size[0] // 2, img.size[1] // 2))
             img = img.resize((ceil(img.size[0] * scale), ceil(img.size[1] * scale)))
             
             w, h = img.size
@@ -157,10 +153,8 @@ class ImageSplitter:
                 direction = Index(connected.row - r, connected.column - c)
                 if (piece.edges[Sides.directionToSide(direction)] == Connection.OUT):
                     offset = { 'x': direction.column * jointOffsetStepOut.x, 'y': direction.row * jointOffsetStepOut.y }
-                elif (piece.edges[Sides.directionToSide(direction)] == Connection.IN): # == Connection.IN
-                    offset = { 'x': direction.column * jointOffsetStepIn.x, 'y': direction.row * jointOffsetStepIn.y }
                 else:
-                    raise Exception()
+                    offset = { 'x': direction.column * jointOffsetStepIn.x, 'y': direction.row * jointOffsetStepIn.y }
                     
                 joints[f"{connected.row}_{connected.column}"] = offset
 
@@ -174,7 +168,6 @@ class ImageSplitter:
             "pieces": {}
         }
 
-        saveFolder = saveFolder if saveFolder[-1] == os.path.sep else saveFolder + f'{os.path.sep}'
         path = saveFolder + 'puzzleData.json'
         
         for r in range(puzzleSize[0]):
@@ -183,13 +176,13 @@ class ImageSplitter:
                 data['pieces'][f'{r}_{c}']['src'] = saveFolder + f'{r}_{c}.png'
 
         with open(path, 'w', encoding='utf-8') as f:
-            dump(data, f, ensure_ascii=False, indent=4)
+            dump(data, f, ensure_ascii=False, indent=0)
 
 
     
     @staticmethod
     def joinImages(imagesFolder, rows, columns, margin):
-        path = imagesFolder + '*.png' if imagesFolder[-1] == os.path.sep else imagesFolder + f'{os.path.sep}*.png'
+        path = imagesFolder + '*.png'
         files = glob.glob(path)
         pieceSize: tuple[int, int]
         with Image.open(files[0]) as img:
@@ -207,79 +200,3 @@ class ImageSplitter:
                 connectedImages.paste(img, pastePosition, img)
 
         connectedImages.show()
-
-        
-
-    @staticmethod
-    def test():
-        with Image.open("./src/images/sampleImage00.png") as org:
-            w, h = org.size
-            joined = Image.new("RGBA", size=(200, 100))
-
-            step = 100
-            # img = cut(img, 400, 200, 140, 140)
-            img = ImageSplitter._cutWithMargin(org, 400, 200, 100, 100, 40)
-            # img2 = cutWithMargin(org, 500, 200, 100, 100, 40)
-            edgesData = {
-                            Sides.TOP : Connection.OUT, 
-                            Sides.RIGHT : Connection.IN, 
-                            Sides.BOTTOM : Connection.IN, 
-                            Sides.LEFT : Connection.OUT
-                        }
-        
-            img:Image = ImageSplitter._maskImage(img, 40, edgesData)
-
-            img.show()
-
-            # img = addBorder(img, (169,169,169))
-            # img.show()
-            # return 
-
-            # r, g, b, a = img.split()
-            # edges = a.filter(ImageFilter.FIND_EDGES)
-            # # edges = gray_image.filter(ImageFilter.FIND_EDGES)
-            # edges = edges.convert("RGBA")
-            # edgesEnchaced = edges.filter(ImageFilter.MaxFilter(1))
-            # # edges.show()
-            # # edgesEnchaced.show()
-            # edgesInvert = ImageOps.invert(edgesEnchaced.convert("L"))
-            # # edgesEnchacedColored = edgesEnchaced.filter(ImageFilter.)
-            # replaceColor(edgesEnchaced, WHITE, (105,105,105))
-            # imgWithEdge = Image.composite(img, edgesEnchaced, edgesInvert)
-            # imgWithEdge.show()
-
-            # r, g, b, a = img.split()
-            # rgb_image = Image.merge("RGB", (r, g, b))
-            # gray_image = rgb_image.convert("L")
-            # edges = gray_image.filter(ImageFilter.FIND_EDGES)
-            # edges_rgba = edges.convert("RGBA")
-            # edge_r, edge_g, edge_b, edge_a = edges_rgba.split()
-            # final_image = Image.merge("RGBA", (edge_r, edge_g, edge_b, a))
-            # final_image.show()
-
-        # img2 = maskImage(img2, 40)
-
-        # joined.paste(img, (0, 0))
-        # joined.paste(img2, (100, 0))
-        
-
-        # img = maskImage(img, 40)
-        # img = ImageOps.expand(img, border, fill="black")
-
-        # puzzleMask = makePuzzlePiece(100, 100, 40, 40).convert("L")
-        # img.putalpha(puzzleMask)
-        
-        # img.show()
-        # img2.show()
-        # joined.show()
-            
-
-if __name__ == "__main__":       
-    # test()
-    puzzleSize = (7, 7)
-    puzzleMap = PuzzleMap(*puzzleSize)
-    puzzleMap.solvePuzzle()
-    SAVE_FOLDER = "C:\\Users\\Vlad\\Desktop\\testApp\\puzzle\\src\\puzzlePieces\\"
-    margin = 35
-    ImageSplitter.splitImage("./src/images/sampleImage00.png", SAVE_FOLDER, puzzleMap, 1, False)
-    ImageSplitter.joinImages(SAVE_FOLDER, *puzzleSize, margin)

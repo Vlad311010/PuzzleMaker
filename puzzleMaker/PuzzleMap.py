@@ -1,6 +1,3 @@
-from functools import reduce
-import json
-
 from Structures import *
   
 
@@ -78,11 +75,4 @@ class PuzzleMap:
         formatedData = '\n'.join(reduced)
         return formatedData
     
-
-
-if __name__ == "__main__":
-    puzzleMap = PuzzleMap(5, 3)
-    puzzleMap.solvePuzzle()
-    print(puzzleMap)
-
 

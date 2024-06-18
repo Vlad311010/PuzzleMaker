@@ -28,7 +28,7 @@ def callPuzzleMaker(image, rows, columns, scale):
 def createPuzzle():
     body = loads(request.form['data'])
     image = request.files['image']
-    if PuzzleMaker.validateInput(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale']):
+    if PuzzleMaker.validateParameters(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale']):
         return {'errorMessage': 'Image size is too small or splitted in too many pieces'}, 400
 
     callPuzzleMaker(image, body['puzzleSize']['rows'], body['puzzleSize']['columns'], body['scale'])

@@ -43,14 +43,14 @@ export default function UI({size, setSeed, initialized, canInitiateRequest, hand
                                     {resetBtn}
                                 </span>
 
-                                <span className="d-flex" style={{ width:'20%' }}>
+                                <span className="d-flex" style={{ width:'25%' }}>
                                     <label htmlFor="sizeR" className="nav-link active">Puzzle Size:</label>
                                     <input id="sizeR" autoComplete="off" ref={rowsInput} className="form-control-sm w-25" placeholder={initialized ? size.rows : "R"} aria-label="SizeR"></input>
                                     <h4 type="text" className="text-white me-1">×</h4>
                                     <input ref={columnsInput} autoComplete="off" className="form-control-sm w-25" placeholder={initialized ? size.columns : "C"} aria-label="SizeC"></input>
                                 </span>
 
-                                <span className="d-flex" style={{ width:'15%' }}>
+                                <span className="d-flex" style={{ width:'20%' }}>
                                     <label htmlFor="Resize" className="nav-link active">Scale (optional):</label>
                                     <input ref={scaleInput} autoComplete="off" id="Resize" className="form-control-sm w-25 me-1" placeholder="0-1"></input>
                                 </span>

@@ -35,36 +35,13 @@ class ImageSplitter:
                 if (x < margin.x // 2 or x > size.x + margin.x // 2):
                     pixels[x, y] = cls.BLACK
 
-        jointSize = ceil(min(w, h) * 0.40)
-        negativeOffset = mw // 2
+        for side in joints.keys():
+            if (joints[side] == Connection.NONE):
+                continue
 
-        if (joints[Sides.LEFT] == Connection.OUT):
-            joint = JointRectangle.new(size.x, size.y, mw, Sides.LEFT, True)            
-            insertJoint(im, joint, 0, mid.y - (jointSize // 2))
-        elif (joints[Sides.LEFT] == Connection.IN):
-            joint = JointRectangle.new(size.x, size.y, mw, Sides.LEFT, False)
-            insertJoint(im, joint, negativeOffset, mid.y - (jointSize // 2))
-        
-        if (joints[Sides.RIGHT] == Connection.OUT):
-            joint = JointRectangle.new(size.x, size.y, mw, Sides.RIGHT, True)
-            insertJoint(im, joint, margin.x // 2 + size.x + 1, mid.y - (jointSize // 2))
-        elif (joints[Sides.RIGHT] == Connection.IN):
-            joint = JointRectangle.new(size.x, size.y, mw, Sides.RIGHT, False)
-            insertJoint(im, joint, margin.x // 2 + size.x + 1 - negativeOffset, mid.y - (jointSize // 2))
-
-        if (joints[Sides.TOP] == Connection.OUT):
-            joint = JointRectangle.new(size.x, size.y, mw, Sides.TOP, True)
-            insertJoint(im, joint, mid.x - (jointSize // 2), 0)
-        elif (joints[Sides.TOP] == Connection.IN):
-            joint = JointRectangle.new(size.x, size.y, mw, Sides.TOP, False)
-            insertJoint(im, joint, mid.x - (jointSize // 2), negativeOffset)
-
-        if (joints[Sides.BOTTOM] == Connection.OUT):
-            joint = JointRectangle.new(size.x, size.y, mw, Sides.BOTTOM, True)
-            insertJoint(im, joint, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1)
-        elif (joints[Sides.BOTTOM] == Connection.IN):
-            joint = JointRectangle.new(size.x, size.y, mw, Sides.BOTTOM, False)
-            insertJoint(im, joint, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1 - negativeOffset)
+            # joint = JointRectangle.new(size.x, size.y, mw, side, joints[side] == Connection.OUT)            
+            joint = JointTriangle.new(size.x, size.y, mw, side, joints[side] == Connection.OUT)            
+            insertJoint(im, joint.image, joint.offset.x, joint.offset.y)
 
         return im
 
@@ -209,12 +186,13 @@ class ImageSplitter:
 
 def test():
     connections = {
-        Sides.TOP : Connection.OUT, 
-        Sides.RIGHT : Connection.IN, 
-        Sides.BOTTOM : Connection.IN, 
+        Sides.TOP : Connection.NONE, 
+        Sides.RIGHT : Connection.OUT, 
+        Sides.BOTTOM : Connection.OUT, 
         Sides.LEFT : Connection.OUT
     }
-    piece = ImageSplitter._makePuzzlePiece(150, 150, 50, 50, connections)
+    margin = 80
+    piece = ImageSplitter._makePuzzlePiece(150, 150, margin, margin, connections)
     piece.show()
 
 if __name__ == "__main__":       

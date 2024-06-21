@@ -1,8 +1,10 @@
 import Draggable from "react-draggable";
 
 export default function ImagePreview({image}) {
-    const srcImage = URL.createObjectURL(image);
+    if (!image)
+        return;
 
+    const srcImage = URL.createObjectURL(image);
     return (
         <Draggable
             axis="both"

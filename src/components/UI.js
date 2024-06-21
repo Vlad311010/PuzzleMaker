@@ -11,6 +11,12 @@ export default function UI({size, setSeed, initialized, canInitiateRequest, hand
     const numbersOnlyRegex = /^\d*\d+$/;
     const number01Regex = /^(0(\.\d+)?|1(\.0+)?)$/
 
+
+    const showOriginalBtn = imageInput.current?.files[0] ?
+        <button onClick={handleShowOriginal} className="btn btn-outline-secondary btn me-2" style={{ width:'130px' }}>Show Original</button> 
+        :
+        <button onClick={handleShowOriginal} className="btn btn-outline-secondary btn me-2" style={{ width:'130px' }} disabled>Show Original</button> 
+
     const resetBtn = initialized ? 
         <button onClick={handleReset} autoComplete="off" className="btn btn-outline-warning">Reset</button> 
         :
@@ -34,7 +40,7 @@ export default function UI({size, setSeed, initialized, canInitiateRequest, hand
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <span onClick={handleShowOriginal} className="nav-link me-2" style={{ width:'120px' }}>Show Original</span>
+                            {showOriginalBtn}
                         </li>
                         <form>
                             <li className="nav-item d-flex">

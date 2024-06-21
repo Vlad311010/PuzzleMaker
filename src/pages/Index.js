@@ -1,22 +1,9 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Puzzle from "../components/Puzzle";
 import UI from "../components/UI";
 import ApiRequest from "../scrips/apiRequests";
 import PuzzleMock from "../components/PuzzleMock";
 import ImagePreview from "../components/ImagePreview";
-
-async function getMeta(url) {
-  const img = new Image();
-  img.src = url;
-  await img.decode();  
-  return img
-};
-
-async function getNaturalSize(url) {
-  const img = await getMeta(url);
-  return { width: img.naturalWidth, height: img.naturalHeight };
-}
-
 
 
 export default function Index() {
@@ -48,7 +35,7 @@ export default function Index() {
   }
   
   function onImageSelect(e, image) {
-    e.preventDefault()
+    e.preventDefault();
     setSelectedImage(image);
   }
 

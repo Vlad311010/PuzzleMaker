@@ -8,6 +8,7 @@ from PIL import Image, ImageFilter, ImageOps
 
 from Structures import *
 from PuzzleMap import PuzzleMap
+from Joints import *
 
 
 class ImageSplitter:
@@ -34,33 +35,36 @@ class ImageSplitter:
                 if (x < margin.x // 2 or x > size.x + margin.x // 2):
                     pixels[x, y] = cls.BLACK
 
-        jointSize = ceil(min(w, h) * 0.45)
-        jointHorizontalPositive = Image.new("RGB", size=(mw//2, jointSize), color=cls.WHITE)
-        jointVerticalPositive = jointHorizontalPositive.resize((jointHorizontalPositive.size[1], jointHorizontalPositive.size[0]))
-        jointHorizontalNegative = ImageOps.invert(jointHorizontalPositive)
-        jointVerticalNegative = ImageOps.invert(jointVerticalPositive)
-
+        jointSize = ceil(min(w, h) * 0.40)
         negativeOffset = mw // 2
-        
-        if (joints[Sides.LEFT] == Connection.OUT):
-            insertJoint(im, jointHorizontalPositive, 0, mid.y - (jointSize // 2))
-        elif (joints[Sides.LEFT] == Connection.IN):
-            insertJoint(im, jointHorizontalNegative, negativeOffset, mid.y - (jointSize // 2))
 
+        if (joints[Sides.LEFT] == Connection.OUT):
+            joint = JointRectangle.new(size.x, size.y, mw, Sides.LEFT, True)            
+            insertJoint(im, joint, 0, mid.y - (jointSize // 2))
+        elif (joints[Sides.LEFT] == Connection.IN):
+            joint = JointRectangle.new(size.x, size.y, mw, Sides.LEFT, False)
+            insertJoint(im, joint, negativeOffset, mid.y - (jointSize // 2))
+        
         if (joints[Sides.RIGHT] == Connection.OUT):
-            insertJoint(im, jointHorizontalPositive, margin.x // 2 + size.x + 1, mid.y - (jointSize // 2))
+            joint = JointRectangle.new(size.x, size.y, mw, Sides.RIGHT, True)
+            insertJoint(im, joint, margin.x // 2 + size.x + 1, mid.y - (jointSize // 2))
         elif (joints[Sides.RIGHT] == Connection.IN):
-            insertJoint(im, jointHorizontalNegative, margin.x // 2 + size.x + 1 - negativeOffset, mid.y - (jointSize // 2))
+            joint = JointRectangle.new(size.x, size.y, mw, Sides.RIGHT, False)
+            insertJoint(im, joint, margin.x // 2 + size.x + 1 - negativeOffset, mid.y - (jointSize // 2))
 
         if (joints[Sides.TOP] == Connection.OUT):
-            insertJoint(im, jointVerticalPositive, mid.x - (jointSize // 2), 0)
+            joint = JointRectangle.new(size.x, size.y, mw, Sides.TOP, True)
+            insertJoint(im, joint, mid.x - (jointSize // 2), 0)
         elif (joints[Sides.TOP] == Connection.IN):
-            insertJoint(im, jointVerticalNegative, mid.x - (jointSize // 2), negativeOffset)
+            joint = JointRectangle.new(size.x, size.y, mw, Sides.TOP, False)
+            insertJoint(im, joint, mid.x - (jointSize // 2), negativeOffset)
 
         if (joints[Sides.BOTTOM] == Connection.OUT):
-            insertJoint(im, jointVerticalPositive, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1)
+            joint = JointRectangle.new(size.x, size.y, mw, Sides.BOTTOM, True)
+            insertJoint(im, joint, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1)
         elif (joints[Sides.BOTTOM] == Connection.IN):
-            insertJoint(im, jointVerticalNegative, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1 - negativeOffset)
+            joint = JointRectangle.new(size.x, size.y, mw, Sides.BOTTOM, False)
+            insertJoint(im, joint, mid.x - (jointSize // 2), margin.y // 2 + size.y + 1 - negativeOffset)
 
         return im
 
@@ -200,3 +204,26 @@ class ImageSplitter:
                 connectedImages.paste(img, pastePosition, img)
 
         connectedImages.show()
+
+
+
+def test():
+    connections = {
+        Sides.TOP : Connection.OUT, 
+        Sides.RIGHT : Connection.IN, 
+        Sides.BOTTOM : Connection.IN, 
+        Sides.LEFT : Connection.OUT
+    }
+    piece = ImageSplitter._makePuzzlePiece(150, 150, 50, 50, connections)
+    piece.show()
+
+if __name__ == "__main__":       
+    test()
+    # puzzleSize = (7, 7)
+    # puzzleMap = PuzzleMap(*puzzleSize)
+    # puzzleMap.solvePuzzle()
+    # SAVE_FOLDER = "C:\\Users\\Vlad\\Desktop\\testApp\\puzzle\\src\\puzzlePieces\\"
+    # margin = 35
+    # file = r"D:\_Images\_Current\__lily_and_umbral_knight_ender_lilies_quietus_of_the_knights_drawn_by_yamada_ayumi_ayame__5a6f0f3a40f53df7885fc41177b90e77.jpg"
+    # ImageSplitter.splitImage(file, SAVE_FOLDER, puzzleMap, 1, False)
+    # ImageSplitter.joinImages(SAVE_FOLDER, *puzzleSize, margin)

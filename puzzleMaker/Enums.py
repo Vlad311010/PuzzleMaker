@@ -51,10 +51,10 @@ class Connection(Enum):
     OUT = 1
     IN = 2
 
-    def randomJoin():
+    def randomConnection():
         return Connection.OUT if (random() > 0.5) else Connection.IN
     
-    def oppositeJoint(joint: Connection):
+    def oppositeConnection(joint: Connection):
         if (joint == Connection.UNDEFINED or joint == Connection.NONE):
             return joint
         elif (joint == Connection.IN):

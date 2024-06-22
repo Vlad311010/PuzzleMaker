@@ -1,4 +1,7 @@
 from Structures import *
+from Enums import *
+from PuzzlePiece import PuzzlePiece
+from Joints import JointBase
   
 
 class PuzzleMap:
@@ -23,13 +26,19 @@ class PuzzleMap:
         
         return self.puzzleMap[r][c]
     
+    def getOppositeJoint(self, piece:PuzzlePiece, side:Sides) -> JointBase:
+        direction: Index = Sides.sideToDirection(side)
+        adjacentPiece: PuzzlePiece
+        adjacentPiece = self.getPiece(piece.index.row + direction.row, piece.index.column + direction.column)
+        return adjacentPiece.edges[Sides.oppositeSide(side)]
+    
     def tryGetPiece(self, r, c) -> tuple[bool, PuzzlePiece | None]:
         try:
             return (True, self.getPiece(r, c))
         except ValueError:
             return (False, None)
         
-    def getPieceMap(self, r, c) -> dict[Sides, Connection]:
+    def getPieceMap(self, r, c) -> dict[Sides, JointBase]:
         piece = self.getPiece(r, c)
         return piece.edges
         
@@ -38,26 +47,26 @@ class PuzzleMap:
 
         # if border piece set appropriate edge connection to none
         if (r == 0):
-            piece.edges[Sides.TOP] = Connection.NONE
+            piece.edges[Sides.TOP].connection = Connection.NONE
         elif (r == self.rows - 1):
-            piece.edges[Sides.BOTTOM] = Connection.NONE
+            piece.edges[Sides.BOTTOM].connection = Connection.NONE
 
         if (c == 0):
-            piece.edges[Sides.LEFT] = Connection.NONE
+            piece.edges[Sides.LEFT].connection = Connection.NONE
         elif (c == self.columns - 1):
-            piece.edges[Sides.RIGHT] = Connection.NONE
+            piece.edges[Sides.RIGHT].connection = Connection.NONE
 
         # for every undefined edge set random connection (propagate to adjacent piece)
         for key in piece.edges.keys():
-            if piece.edges[key] == Connection.UNDEFINED:
-                joint = Connection.randomJoin()
-                piece.edges[key] = joint
+            if piece.edges[key].connection == Connection.UNDEFINED:
+                joint = Connection.randomConnection()
+                piece.edges[key].connection = joint
                 direction: Index = Sides.sideToDirection(key)
                 success: bool
                 adjacentPiece: PuzzlePiece
                 success, adjacentPiece = self.tryGetPiece(r + direction.row, c + direction.column)
                 if (success):
-                    adjacentPiece.edges[Sides.oppositeSide(key)] = Connection.oppositeJoint(joint)
+                    adjacentPiece.edges[Sides.oppositeSide(key)].connection = Connection.oppositeConnection(joint)
 
 
 

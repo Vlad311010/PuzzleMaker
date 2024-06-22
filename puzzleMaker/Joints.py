@@ -1,15 +1,20 @@
 from math import ceil
 from abc import ABC, abstractmethod, ABCMeta
+from random import random
 
-from PIL import Image, ImageOps, ImageDraw
+from PIL import Image, ImageDraw
 
-from Structures import Sides, Vector2
+from Structures import Vector2
+from Enums import *
+
+
 
 
 class JointBase(object, metaclass=ABCMeta):
-    def __init__(self, jointImage:Image, jointOffset:tuple[int, int]) -> None:
+    def __init__(self, jointImage:Image, jointOffset:tuple[int, int], connection:Connection) -> None:
         self.image:Image = jointImage
         self.offset:tuple[int, int] = jointOffset
+        self.connection:Connection = connection
 
     def _getColor(positive):
         return (255, 255, 255) if positive else (0, 0, 0)
@@ -19,6 +24,21 @@ class JointBase(object, metaclass=ABCMeta):
     def new(cls, pieceWidth:int, pieceHeight:int, margin:int, side:Sides, positive:bool):
         # create class object instance with image, offset for insertion and joint generation parameters
         pass
+
+
+class JointStub(JointBase):
+    
+    @classmethod
+    def new(cls, pieceWidth:int, pieceHeight:int, margin:int, side:Sides, positive:bool):
+        joint = Image.new("RGB", size=(pieceWidth + margin, pieceHeight + margin), color=(255, 255, 255))
+        return cls(joint, Vector2(0, 0), Connection.UNDEFINED)
+
+    
+    @classmethod
+    def stub(cls):
+        joint = Image.new("RGB", size=(0, 0), color=(255, 255, 255))
+        return cls(joint, Vector2(0, 0), Connection.UNDEFINED)
+
 
     
 class JointRectangle(JointBase):
@@ -44,7 +64,7 @@ class JointRectangle(JointBase):
             joint = Image.new("RGB", size=(jointSize, margin//2), color=color)
             offset = Vector2(mid.x - (jointSize // 2), margin // 2 + pieceHeight + 1 - (not positive) * negativeOffset)
 
-        return cls(joint, offset)
+        return cls(joint, offset, Connection.OUT if positive else Connection.IN)
     
 
 class JointTriangle(JointBase):
@@ -94,9 +114,21 @@ class JointTriangle(JointBase):
                 points = ((0, margin//2), (jointSize, margin//2), (jointSize//2, 0))
             draw.polygon(points, fill=color)
 
-        return cls(joint, offset)
+        return cls(joint, offset, Connection.OUT if positive else Connection.IN)
     
 
+class JoinFactory():
+
+    _defaultProbabilities = [(0.6, JointRectangle), (1, JointTriangle)]
+
+    @staticmethod
+    def randomJointType(probabilities:list[tuple[float, JointBase]] = _defaultProbabilities) -> JointBase:
+        value = random()
+        for p, c in probabilities:
+            if (value < p):
+                return c
+
+        return probabilities[-1][1]
 
 
 

@@ -162,10 +162,9 @@ class ImageSplitter:
         for r in range(puzzleSize[0]):
             for c in range(puzzleSize[1]):
                 data['pieces'][f'{r}_{c}'] = calculateJointsOffset(r, c)
-                data['pieces'][f'{r}_{c}']['src'] = saveFolder + f'{r}_{c}.png'
 
         with open(path, 'w', encoding='utf-8') as f:
-            dump(data, f, ensure_ascii=False, indent=0)
+            dump(data, f, ensure_ascii=False)
 
 
     

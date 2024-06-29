@@ -111,7 +111,7 @@ class ImageSplitter:
             
             w, h = img.size
             pieceSize = Vector2(w / puzzleMap.columns, h / puzzleMap.rows)
-            margin = ceil(min(pieceSize.x, pieceSize.y) * 0.6)
+            margin = ceil(min(pieceSize.x, pieceSize.y) * 0.52)
             stepX = pieceSize[0]
             stepY = pieceSize[1]
             y = 0
